@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GameScorePad Hall</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <script>document.title = "GameScorePad Hall";</script>
+  <style>
+    :root {
+      --c-font: #F6F2E8;
+      --c-bar: #5AA8D6;
+      --c-table: #14243C;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050508;
+      color: var(--c-font);
+      font-family: "Segoe UI", "Arial Narrow", Arial, sans-serif;
+      cursor: none;
+      user-select: none;
+    }
+    #stage {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: center center;
+      background: radial-gradient(ellipse at 50% 40%, #10131b 0%, #050508 72%);
+      background-size: cover;
+      background-position: center;
+      color: var(--c-font);
+    }
+    #stage.has-bg {
+      background-color: #050508;
+      background-repeat: no-repeat;
+    }
+    .panel {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      padding: 40px 56px 48px;
+      display: flex;
+      flex-direction: column;
+    }
+    .title {
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 0 auto 22px;
+      color: var(--c-head);
+      line-height: 1.1;
+    }
+    #splash { align-items: center; justify-content: center; }
+    #splash .title { font-size: 88px; margin: 0; }
+    .board {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      max-width: 100%;
+      max-height: calc(100% - 160px);
+      overflow: hidden;
+      background: none;
+      padding: 8px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #tablePanel {
+      --table-fs: 36px;
+      --head-fs: 32px;
+      --row-pad: 10px 14px;
+      --medal: 52px;
+      justify-content: center;
+    }
+    table {
+      width: 100%;
+      max-width: 100%;
+      border-collapse: collapse;
+      font-size: var(--table-fs);
+      font-weight: 800;
+      table-layout: auto;
+    }
+    thead th {
+      font-size: var(--head-fs);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 1;
+      text-align: left;
+      padding: var(--row-pad);
+      color: var(--c-head);
+      border: 1px solid rgba(128, 128, 128, 0.7);
+    }
+    thead th.num, td.place, td.tour, td.score { text-align: center; }
+    tbody tr td {
+      background: var(--c-table);
+      padding: var(--row-pad);
+      color: var(--c-font);
+      border: 1px solid rgba(128, 128, 128, 0.7);
+    }
+    td.place { width: 92px; padding-left: 10px; padding-right: 8px; }
+    .medal {
+      display: inline-grid;
+      place-items: center;
+      min-width: var(--medal);
+      height: var(--medal);
+      border-radius: 14px;
+      background: rgba(128, 128, 128, 0.25);
+      font-weight: 800;
+    }
+    tr.p1 .medal {
+      background: #E8C547;
+      color: #1a1406;
+    }
+    tr.p2 .medal {
+      background: #A8B0BA;
+      color: #1a1406;
+    }
+    tr.p3 .medal {
+      background: #C67A32;
+      color: #1a1406;
+    }
+    tr.p1 td {
+      border-top: 3px solid #C9A227;
+      border-bottom: 3px solid #C9A227;
+    }
+    tr.p1 td:first-child { border-left: 3px solid #C9A227; }
+    tr.p1 td:last-child { border-right: 3px solid #C9A227; }
+    tr.p2 td {
+      border-top: 3px solid #8E99A6;
+      border-bottom: 3px solid #8E99A6;
+    }
+    tr.p2 td:first-child { border-left: 3px solid #8E99A6; }
+    tr.p2 td:last-child { border-right: 3px solid #8E99A6; }
+    tr.p3 td {
+      border-top: 3px solid #B87333;
+      border-bottom: 3px solid #B87333;
+    }
+    tr.p3 td:first-child { border-left: 3px solid #B87333; }
+    tr.p3 td:last-child { border-right: 3px solid #B87333; }
+    td.name {
+      letter-spacing: 0.02em;
+      text-align: left;
+      max-width: 420px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    td.tour {
+      font-variant-numeric: tabular-nums;
+      opacity: 1;
+      min-width: 68px;
+    }
+    td.score {
+      color: var(--c-bar);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      min-width: 120px;
+    }
+    tr.enter { animation: rowIn 420ms ease-out; }
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+    #awardPanel {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 18px;
+    }
+    #awardLabel {
+      font-size: 80px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-font);
+      line-height: 1.1;
+      padding: 18px 48px;
+      background: var(--c-table);
+      border: 4px solid var(--c-head);
+      border-radius: 18px;
+      max-width: 92%;
+    }
+    #awardName {
+      font-size: 92px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--c-head);
+      max-width: 90%;
+      min-height: 1.1em;
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    #awardLabel.p1 {
+      border-color: #C9A227;
+      color: #C9A227;
+    }
+    #awardLabel.p2 {
+      border-color: #A8B0BA;
+      color: #A8B0BA;
+    }
+    #awardLabel.p3 {
+      border-color: #C67A32;
+      color: #C67A32;
+    }
+    #awardName.is-on {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <section id="splash" class="panel">
+      <div class="title" id="splashTitle">СЧЁТ</div>
+    </section>
+    <section id="tablePanel" class="panel" hidden>
+      <div class="title" id="tableTitle">СЧЁТ</div>
+      <div class="board">
+      <table>
+        <thead>
+          <tr id="headRow"></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      </div>
+    </section>
+    <section id="awardPanel" class="panel" hidden>
+      <div id="awardLabel"></div>
+      <div id="awardName"></div>
+    </section>
+  </div>
+  <script type="module" src="js/display.js"></script>
+</body>
+</html>

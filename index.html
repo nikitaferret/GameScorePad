@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GameScorePad — пульт</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #14161c;
+      color: #ece8df;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    #pult {
+      box-sizing: border-box;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      min-height: 0;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 14px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .brand-text .soft { font-weight: 300; opacity: 0.85; }
+    .logo-mark { width: 22px; height: 22px; display: block; border-radius: 6px; }
+    #gameTitle {
+      flex: 1;
+      min-width: 0;
+      font: 700 16px/1.2 "Segoe UI", Arial, sans-serif;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 8px;
+      background: #0f1116;
+      color: #f6f2e8;
+      outline: none;
+    }
+    #openDisplay {
+      height: 36px;
+      padding: 0 14px;
+      font: 700 13px/1 "Segoe UI", Arial, sans-serif;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #c9a227;
+      color: #1a1406;
+      flex-shrink: 0;
+    }
+    .view-tabs {
+      display: none;
+      flex-shrink: 0;
+      gap: 8px;
+    }
+    .view-tabs button { flex: 1; }
+    .work {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+    }
+    @media (max-width: 1100px) {
+      .view-tabs { display: flex; }
+      .work {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr);
+      }
+      #pult[data-view="table"] .side-card { display: none; }
+      #pult[data-view="hall"] .table-card { display: none; }
+    }
+    .card {
+      background: #1d212b;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+    }
+    .card.table-card { overflow: hidden; }
+    .card.side-card { overflow: auto; }
+    label.kicker {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 8px;
+    }
+    #scoreTable {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+    }
+    #scoreTable table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #scoreTable th {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      padding: 6px 4px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      background: #1d212b;
+      z-index: 1;
+    }
+    #scoreTable th:first-child { text-align: left; }
+    #scoreTable td { padding: 3px; }
+    #scoreTable input {
+      width: 100%;
+      font: 700 14px/1.2 "Segoe UI", Arial, sans-serif;
+      padding: 6px 8px;
+      border: 0;
+      border-radius: 6px;
+      background: #0f1116;
+      color: #f6f2e8;
+      outline: none;
+    }
+    #scoreTable input.cell { text-align: center; font-variant-numeric: tabular-nums; }
+    #scoreTable .sum {
+      text-align: center;
+      font: 800 15px/1 "Segoe UI", Arial, sans-serif;
+      color: #f4e6c6;
+      font-variant-numeric: tabular-nums;
+    }
+    .del {
+      width: 28px;
+      height: 28px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #3a2430;
+      color: #f3c2c8;
+      font: 700 16px/1 "Segoe UI", Arial, sans-serif;
+    }
+    .ops, .tours, .modes, .theme-row, .swatches {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .ops { margin-top: 8px; flex-shrink: 0; }
+    #teamCount { opacity: 0.8; font-size: 13px; }
+    .modes {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    button {
+      height: 34px;
+      padding: 0 10px;
+      font: 700 13px/1 "Segoe UI", Arial, sans-serif;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #2c3342;
+      color: #fff;
+    }
+    .modes button {
+      width: auto;
+      flex: 1 1 calc(50% - 4px);
+      min-width: 0;
+      height: 34px;
+    }
+    #animBtn { height: 34px; background: #2a4cad; }
+    button.is-live { box-shadow: inset 0 0 0 2px #c9a227; }
+    .checks {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+    .checks label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+    .theme { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    select {
+      flex: 1;
+      min-width: 0;
+      height: 34px;
+      border: 0;
+      border-radius: 8px;
+      background: #0f1116;
+      color: #f6f2e8;
+      padding: 0 8px;
+    }
+    .swatch { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    .swatch input[type="color"] {
+      width: 36px;
+      height: 28px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+    #tableScale { flex: 1; min-width: 80px; }
+    #tableScaleVal { font-size: 12px; opacity: 0.85; min-width: 2.8em; }
+    #preview {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: #14161c;
+      flex-direction: column;
+      padding: 10px 12px;
+      min-height: 0;
+    }
+    #pult { position: relative; }
+    #pult.is-preview #preview { display: flex; }
+    #preview .preview-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      margin-bottom: 8px;
+    }
+    #preview .preview-bar span { flex: 1; font-size: 13px; opacity: 0.85; }
+    #previewTable {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      background: #1d212b;
+      border-radius: 10px;
+      padding: 8px;
+    }
+    #previewTable table { width: 100%; border-collapse: collapse; }
+    #previewTable th, #previewTable td {
+      border: 1px solid #3a4150;
+      padding: 6px 8px;
+      text-align: center;
+      font-size: 13px;
+    }
+    #previewTable th:nth-child(2), #previewTable td:nth-child(2) { text-align: left; }
+    #previewTable th { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
+    #previewTable .sum { font-weight: 800; color: #f4e6c6; }
+    #checkBtn.is-live { box-shadow: inset 0 0 0 2px #c9a227; }
+    button:hover { filter: brightness(1.08); }
+    #poster {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      background: #14161c;
+      flex-direction: column;
+      padding: 10px 12px;
+      min-height: 0;
+      gap: 8px;
+    }
+    #pult.is-poster #poster { display: flex; }
+    #pult.is-poster #preview { display: none; }
+    .poster-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .poster-bar span { flex: 1; font-size: 13px; opacity: 0.85; }
+    .poster-work {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 10px;
+    }
+    .poster-side {
+      background: #1d212b;
+      border-radius: 10px;
+      padding: 10px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+    .poster-side .modes { margin-bottom: 2px; }
+    .poster-side input[type="text"],
+    .poster-side input[type="date"] {
+      width: 100%;
+      font: 700 14px/1.2 "Segoe UI", Arial, sans-serif;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: 8px;
+      background: #0f1116;
+      color: #f6f2e8;
+      outline: none;
+    }
+    #posterBgHint { font-size: 12px; opacity: 0.75; }
+    #posterLogoScale { flex: 1; min-width: 80px; }
+    #posterLogoScaleVal { font-size: 12px; opacity: 0.85; min-width: 2.8em; }
+    .poster-stage {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f1116;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #posterCanvas {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      background: #050508;
+    }
+  </style>
+</head>
+<body>
+  <div id="pult" data-view="table">
+  <div class="top">
+    <div class="brand" title="GameScorePad">
+      <img class="logo-mark" src="logo.svg" alt="" />
+      <span class="brand-text">GAMESCORE<span class="soft">PAD</span></span>
+    </div>
+    <input id="gameTitle" type="text" placeholder="Название игры" />
+    <button id="openDisplay" type="button">Экран зала</button>
+  </div>
+  <div class="view-tabs">
+    <button type="button" id="tabTable" data-view="table">Таблица</button>
+    <button type="button" id="tabHall" data-view="hall">Зал</button>
+  </div>
+  <div class="work">
+    <section class="card table-card">
+      <label class="kicker">Таблица туров</label>
+      <div id="scoreTable"></div>
+      <div class="ops">
+        <button id="addTeam" type="button">+ команда</button>
+        <span id="teamCount"></span>
+        <button id="saveExcel" type="button">Excel</button>
+        <button id="posterBtn" type="button">Картинка 1:1</button>
+        <button id="savePack" type="button">Комплект</button>
+        <button id="loadPack" type="button">Открыть…</button>
+        <button id="resetScores" type="button">Сброс счёта</button>
+      </div>
+    </section>
+    <section class="card side-card">
+      <label class="kicker">Туры</label>
+      <div class="tours">
+        <button type="button" data-tours="6">6</button>
+        <button type="button" data-tours="7">7</button>
+        <button type="button" data-tours="8">8</button>
+      </div>
+      <label class="kicker" style="margin-top:10px">Зал</label>
+      <div class="modes">
+        <button id="hideBtn" type="button" data-mode="idle">Скрыть</button>
+        <button id="liveBtn" type="button" data-mode="live">Промежуточные</button>
+        <button id="allBtn" type="button" data-mode="all">Вся таблица</button>
+        <button id="finalBtn" type="button" data-mode="final">Итоги</button>
+        <button id="checkBtn" type="button">Проверка</button>
+        <button id="animBtn" type="button">Анимация</button>
+      </div>
+      <div class="checks">
+        <label><input id="awardMiddle" type="checkbox" /> Середина таблицы</label>
+        <label><input id="awardPenult" type="checkbox" /> Предпоследнее место</label>
+      </div>
+      <div class="theme">
+        <label class="kicker">Оформление зала</label>
+        <div class="theme-row">
+          <select id="bgSelect"></select>
+          <button id="pickBg" type="button">Фон…</button>
+          <button id="clearBg" type="button">Убрать</button>
+        </div>
+        <div class="swatches">
+          <label class="swatch">Заголовки <input id="colorHead" type="color" value="#F6F2E8" /></label>
+          <label class="swatch">Шрифт таблицы <input id="colorFont" type="color" value="#F6F2E8" /></label>
+          <label class="swatch">Цифры <input id="colorBar" type="color" value="#5AA8D6" /></label>
+          <label class="swatch">Таблицы <input id="colorTable" type="color" value="#14243C" /></label>
+        </div>
+        <label class="kicker" style="margin-top:8px">Шрифт таблицы зала</label>
+        <div class="theme-row">
+          <input id="tableScale" type="range" min="80" max="200" step="5" value="125" />
+          <span id="tableScaleVal">125%</span>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div id="toast"></div>
+  <div id="preview">
+    <div class="preview-bar">
+      <span>Проверка — зал не меняется</span>
+      <button id="previewClose" type="button">Закрыть</button>
+    </div>
+    <div id="previewTable"></div>
+  </div>
+  <div id="poster">
+    <div class="poster-bar">
+      <span>Картинка 1:1 — итоги для поста</span>
+      <button id="posterSave" type="button">Скачать PNG</button>
+      <button id="posterClose" type="button">Закрыть</button>
+    </div>
+    <div class="poster-work">
+      <section class="poster-side">
+        <label class="kicker">Название</label>
+        <input id="posterTitle" type="text" placeholder="Название игры" />
+        <label class="kicker">Фон</label>
+        <button id="posterBgPick" type="button">Фон</button>
+        <div id="posterBgHint"></div>
+        <label class="kicker">Логотип слева</label>
+        <div class="theme-row">
+          <button id="posterLogoPick" type="button">Логотип…</button>
+          <button id="posterLogoClear" type="button" hidden>Убрать</button>
+        </div>
+        <label class="kicker">Размер логотипа</label>
+        <div class="theme-row">
+          <input id="posterLogoScale" type="range" min="40" max="220" step="5" value="100" />
+          <span id="posterLogoScaleVal">100%</span>
+        </div>
+        <label class="kicker">Дата справа</label>
+        <input id="posterDate" type="date" />
+      </section>
+      <div class="poster-stage">
+        <canvas id="posterCanvas" width="2160" height="2160"></canvas>
+      </div>
+    </div>
+  </div>
+  </div>
+  <input id="bgUpload" type="file" accept="image/*" hidden />
+  <input id="packUpload" type="file" accept="application/json,.json" hidden />
+  <input id="posterBgUpload" type="file" accept="image/*" hidden />
+  <input id="posterLogoUpload" type="file" accept="image/*" hidden />
+  <script type="module" src="js/operator.js"></script>
+</body>
+</html>
