@@ -14,11 +14,11 @@ const awardName = document.getElementById("awardName");
 
 let state = loadState();
 
-function fitStage() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const s = Math.min(w / 1920, h / 1080);
-  stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+// Шрифт зала считается от реальной высоты окна: 1080p — базовая точка,
+// больше экран — крупнее текст. Никакого фиксированного холста 1920×1080.
+function viewUnit() {
+  const h = window.innerHeight || 1080;
+  return Math.max(0.55, Math.min(3.2, h / 1080));
 }
 
 function applyTheme(theme) {
@@ -69,7 +69,9 @@ function fitTable(n) {
   const availW = board.clientWidth;
   if (availH < 40 || availW < 40) return;
   const prefer = Math.max(80, Math.min(200, Number(state.theme?.tableScale) || 125));
-  let fs = Math.round(18 + ((prefer - 80) * 22) / 100);
+  const unit = viewUnit();
+  const floor = Math.max(10, Math.round(12 * unit));
+  let fs = Math.max(floor, Math.round((18 + ((prefer - 80) * 22) / 100) * unit));
   function apply(size) {
     const padY = Math.max(1, Math.round(size * 0.2));
     const padX = Math.max(4, Math.round(size * 0.3));
@@ -78,9 +80,10 @@ function fitTable(n) {
     applyTableScale(size, padY, padX, head, medal);
   }
   function shrink() {
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 40; i++) {
       if (table.scrollHeight <= availH + 1 && table.scrollWidth <= availW + 1) return;
-      fs = Math.max(12, fs - 1);
+      if (fs <= floor) return;
+      fs = Math.max(floor, fs - 1);
       apply(fs);
     }
   }
@@ -173,9 +176,7 @@ bus.on((msg) => {
   if (msg?.type === "state") accept(msg.state);
 });
 paint();
-fitStage();
 window.addEventListener("resize", () => {
-  fitStage();
   fitTable();
 });
 
