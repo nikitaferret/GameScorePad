@@ -602,6 +602,23 @@ tableWrap.addEventListener("keydown", (e) => {
   } else if (e.key === "ArrowDown") {
     nr += 1;
   }
+  if (e.key === "Enter" && nr >= rows) {
+    e.preventDefault();
+    if (state.teams.length >= MAX_TEAMS) {
+      toast(`Максимум ${MAX_TEAMS} команд.`);
+      return;
+    }
+    state.teams.push(newTeam(state.teams, state.tours));
+    el.blur();
+    afterChange();
+    const added = tableWrap.querySelector(`[data-row="${state.teams.length - 1}"][data-col="${c}"]`);
+    if (added) {
+      added.focus();
+      if (typeof added.select === "function") added.select();
+      added.scrollIntoView({ block: "nearest" });
+    }
+    return;
+  }
   if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) return;
   e.preventDefault();
   const next = tableWrap.querySelector(`[data-row="${nr}"][data-col="${nc}"]`);
