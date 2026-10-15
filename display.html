@@ -79,8 +79,9 @@
       justify-content: center;
     }
     table {
-      width: 100%;
+      width: max-content;
       max-width: 100%;
+      flex: 0 0 auto;
       border-collapse: collapse;
       font-size: var(--table-fs);
       font-weight: 800;
@@ -104,7 +105,7 @@
       color: var(--c-font);
       border: 1px solid rgba(128, 128, 128, 0.7);
     }
-    td.place { width: 1%; padding-left: 1vw; padding-right: 0.6vw; }
+    td.place { width: auto; padding-left: 1vw; padding-right: 0.6vw; white-space: nowrap; }
     .medal {
       display: inline-grid;
       place-items: center;
@@ -147,7 +148,8 @@
     td.name {
       letter-spacing: 0.02em;
       text-align: left;
-      max-width: 40vw;
+      width: auto;
+      max-width: none;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

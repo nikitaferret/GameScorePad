@@ -79,9 +79,16 @@ function fitTable(n) {
     const medal = Math.max(16, Math.round(size * 1.3));
     applyTableScale(size, padY, padX, head, medal);
   }
+  function overflow() {
+    table.style.maxWidth = "none";
+    const wide = table.scrollWidth > availW + 1;
+    const tall = table.scrollHeight > availH + 1;
+    table.style.maxWidth = "";
+    return wide || tall;
+  }
   function shrink() {
     for (let i = 0; i < 40; i++) {
-      if (table.scrollHeight <= availH + 1 && table.scrollWidth <= availW + 1) return;
+      if (!overflow()) return;
       if (fs <= floor) return;
       fs = Math.max(floor, fs - 1);
       apply(fs);
