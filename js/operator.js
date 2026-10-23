@@ -573,6 +573,21 @@ window.addEventListener("keydown", (e) => {
   stepAnim();
 });
 
+tableWrap.addEventListener("focusin", (e) => {
+  const tr = e.target.closest?.("tr");
+  if (!tr || !tableWrap.contains(tr)) return;
+  for (const row of tableWrap.querySelectorAll("tr.is-current")) {
+    if (row !== tr) row.classList.remove("is-current");
+  }
+  tr.classList.add("is-current");
+});
+tableWrap.addEventListener("focusout", (e) => {
+  const tr = e.target.closest?.("tr");
+  if (!tr) return;
+  const next = e.relatedTarget;
+  if (next && tr.contains(next)) return;
+  tr.classList.remove("is-current");
+});
 tableWrap.addEventListener("keydown", (e) => {
   const keys = { ArrowUp: 1, ArrowDown: 1, ArrowLeft: 1, ArrowRight: 1, Enter: 1 };
   if (!keys[e.key]) return;
