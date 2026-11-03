@@ -103,6 +103,17 @@ function paintTable() {
   const focusKey = focus?.dataset?.cell || "";
   tableWrap.innerHTML = "";
   const table = document.createElement("table");
+  const cols = document.createElement("colgroup");
+  function addCol(className) {
+    const col = document.createElement("col");
+    col.className = className;
+    cols.append(col);
+  }
+  addCol("team-col");
+  for (let i = 0; i < tours; i++) addCol("score-col");
+  addCol("sum-col");
+  addCol("delete-col");
+  table.append(cols);
   const thead = document.createElement("thead");
   const hr = document.createElement("tr");
   hr.append(th("Команда"));
