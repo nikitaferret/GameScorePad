@@ -114,6 +114,7 @@
     }
     #scoreTable table {
       width: 100%;
+      table-layout: fixed;
       border-collapse: collapse;
     }
     #scoreTable th {
@@ -128,9 +129,13 @@
       background: #1d212b;
       z-index: 1;
     }
+    #scoreTable th:not(:first-child):not(:last-child),
+    #scoreTable td:not(:first-child):not(:last-child) {
+      width: 62px;
+    }
     #scoreTable th:not(:first-child) { text-align: center; }
     #scoreTable th:first-child { text-align: left; }
-    #scoreTable td { padding: 0; }
+    #scoreTable td { padding: 0 2.5px; }
     #scoreTable tr.is-current td {
       background: rgba(90, 168, 214, 0.16);
       box-shadow: inset 0 0 0 1px rgba(90, 168, 214, 0.35);
