@@ -12,6 +12,7 @@ export function defaultTheme() {
     bar: "#5AA8D6",
     table: "#14243C",
     tableScale: 125,
+    titleY: 0,
   };
 }
 

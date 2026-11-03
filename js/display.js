@@ -27,6 +27,8 @@ function applyTheme(theme) {
   document.documentElement.style.setProperty("--c-head", t.head || t.font || "#F6F2E8");
   document.documentElement.style.setProperty("--c-bar", t.bar || "#5AA8D6");
   document.documentElement.style.setProperty("--c-table", t.table || "#14243C");
+  const titleY = Math.max(-20, Math.min(20, Number(t.titleY) || 0));
+  document.documentElement.style.setProperty("--title-y", String(titleY));
   const file = (t.background || "").trim();
   if (file) {
     stage.style.backgroundImage = `url("/bg/${encodeURIComponent(file)}")`;

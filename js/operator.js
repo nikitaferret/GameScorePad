@@ -27,6 +27,8 @@ const colorBar = document.getElementById("colorBar");
 const colorTable = document.getElementById("colorTable");
 const tableScale = document.getElementById("tableScale");
 const tableScaleVal = document.getElementById("tableScaleVal");
+const titleY = document.getElementById("titleY");
+const titleYVal = document.getElementById("titleYVal");
 const bgUpload = document.getElementById("bgUpload");
 const awardMiddle = document.getElementById("awardMiddle");
 const awardPenult = document.getElementById("awardPenult");
@@ -55,6 +57,9 @@ function paint() {
   const sc = Math.max(80, Math.min(200, Number(state.theme.tableScale) || 125));
   if (document.activeElement !== tableScale) tableScale.value = String(sc);
   tableScaleVal.textContent = `${sc}%`;
+  const ty = Math.max(-20, Math.min(20, Number(state.theme.titleY) || 0));
+  if (document.activeElement !== titleY) titleY.value = String(ty);
+  titleYVal.textContent = ty > 0 ? `+${ty} ниже` : ty < 0 ? `${ty} выше` : "0";
   awardMiddle.checked = !!state.awards.middle;
   awardPenult.checked = !!state.awards.penultimate;
   for (const btn of document.querySelectorAll("[data-tours]")) {
@@ -536,6 +541,12 @@ colorTable.addEventListener("input", () => {
 tableScale.addEventListener("input", () => {
   state.theme.tableScale = Number(tableScale.value) || 125;
   tableScaleVal.textContent = `${state.theme.tableScale}%`;
+  afterChange();
+});
+titleY.addEventListener("input", () => {
+  state.theme.titleY = Math.max(-20, Math.min(20, Number(titleY.value) || 0));
+  const v = state.theme.titleY;
+  titleYVal.textContent = v > 0 ? `+${v} ниже` : v < 0 ? `${v} выше` : "0";
   afterChange();
 });
 document.getElementById("clearBg").addEventListener("click", () => {
