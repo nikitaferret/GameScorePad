@@ -74,7 +74,7 @@
     .view-tabs button { flex: 1; }
     .work {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 260px;
+      grid-template-columns: minmax(0, 1fr) var(--side-width, 320px);
       gap: 10px;
       flex: 1;
       min-height: 0;
@@ -409,6 +409,11 @@
         <div class="theme-row">
           <input id="tableScale" type="range" min="80" max="200" step="5" value="125" />
           <span id="tableScaleVal">125%</span>
+        </div>
+        <label class="kicker" style="margin-top:8px">Ширина блока управления</label>
+        <div class="theme-row">
+          <input id="sideWidth" type="range" min="220" max="420" step="10" value="320" />
+          <span id="sideWidthVal">320 px</span>
         </div>
         <label class="kicker" style="margin-top:8px">Положение заголовка зала</label>
         <div class="theme-row">

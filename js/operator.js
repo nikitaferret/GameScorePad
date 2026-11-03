@@ -29,6 +29,8 @@ const tableScale = document.getElementById("tableScale");
 const tableScaleVal = document.getElementById("tableScaleVal");
 const titleY = document.getElementById("titleY");
 const titleYVal = document.getElementById("titleYVal");
+const sideWidth = document.getElementById("sideWidth");
+const sideWidthVal = document.getElementById("sideWidthVal");
 const bgUpload = document.getElementById("bgUpload");
 const awardMiddle = document.getElementById("awardMiddle");
 const awardPenult = document.getElementById("awardPenult");
@@ -60,6 +62,10 @@ function paint() {
   const ty = Math.max(-20, Math.min(20, Number(state.theme.titleY) || 0));
   if (document.activeElement !== titleY) titleY.value = String(ty);
   titleYVal.textContent = ty > 0 ? `+${ty} ниже` : ty < 0 ? `${ty} выше` : "0";
+  const sw = Math.max(220, Math.min(420, Number(state.layout?.sideWidth) || 320));
+  document.getElementById("pult").style.setProperty("--side-width", `${sw}px`);
+  if (document.activeElement !== sideWidth) sideWidth.value = String(sw);
+  sideWidthVal.textContent = `${sw} px`;
   awardMiddle.checked = !!state.awards.middle;
   awardPenult.checked = !!state.awards.penultimate;
   for (const btn of document.querySelectorAll("[data-tours]")) {
@@ -547,6 +553,13 @@ titleY.addEventListener("input", () => {
   state.theme.titleY = Math.max(-20, Math.min(20, Number(titleY.value) || 0));
   const v = state.theme.titleY;
   titleYVal.textContent = v > 0 ? `+${v} ниже` : v < 0 ? `${v} выше` : "0";
+  afterChange();
+});
+sideWidth.addEventListener("input", () => {
+  if (!state.layout) state.layout = {};
+  state.layout.sideWidth = Math.max(220, Math.min(420, Number(sideWidth.value) || 320));
+  sideWidthVal.textContent = `${state.layout.sideWidth} px`;
+  document.getElementById("pult").style.setProperty("--side-width", `${state.layout.sideWidth}px`);
   afterChange();
 });
 document.getElementById("clearBg").addEventListener("click", () => {
