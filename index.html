@@ -74,17 +74,35 @@
     .view-tabs button { flex: 1; }
     .work {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) var(--side-width, 320px);
-      gap: 10px;
+      grid-template-columns: minmax(320px, 1fr) 10px var(--side-width, 320px);
+      gap: 0;
       flex: 1;
       min-height: 0;
     }
+    .splitter {
+      position: relative;
+      cursor: col-resize;
+      touch-action: none;
+      background: transparent;
+      z-index: 5;
+    }
+    .splitter::after {
+      content: "";
+      position: absolute;
+      inset: 0 4px;
+      border-radius: 4px;
+      background: #343b49;
+      transition: background 120ms ease;
+    }
+    .splitter:hover::after,
+    #pult.is-resizing .splitter::after { background: #5AA8D6; }
     @media (max-width: 1100px) {
       .view-tabs { display: flex; }
       .work {
         grid-template-columns: 1fr;
         grid-template-rows: minmax(0, 1fr);
       }
+      .splitter { display: none; }
       #pult[data-view="table"] .side-card { display: none; }
       #pult[data-view="hall"] .table-card { display: none; }
     }
@@ -372,6 +390,7 @@
         <button id="resetScores" type="button">Сброс счёта</button>
       </div>
     </section>
+    <div class="splitter" id="splitter" role="separator" aria-label="Изменить ширину блока управления" tabindex="0"></div>
     <section class="card side-card">
       <label class="kicker">Туры</label>
       <div class="tours">
@@ -409,11 +428,6 @@
         <div class="theme-row">
           <input id="tableScale" type="range" min="80" max="200" step="5" value="125" />
           <span id="tableScaleVal">125%</span>
-        </div>
-        <label class="kicker" style="margin-top:8px">Ширина блока управления</label>
-        <div class="theme-row">
-          <input id="sideWidth" type="range" min="220" max="420" step="10" value="320" />
-          <span id="sideWidthVal">320 px</span>
         </div>
         <label class="kicker" style="margin-top:8px">Положение заголовка зала</label>
         <div class="theme-row">
