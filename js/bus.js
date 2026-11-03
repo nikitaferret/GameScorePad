@@ -66,7 +66,6 @@ export function defaultState() {
       { id: "t4", name: "Команда 4", scores: empties(tours) },
     ],
     theme: defaultTheme(),
-    layout: { sideWidth: 320 },
   };
 }
 

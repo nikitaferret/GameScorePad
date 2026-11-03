@@ -60,8 +60,6 @@ function paint() {
   const ty = Math.max(-20, Math.min(20, Number(state.theme.titleY) || 0));
   if (document.activeElement !== titleY) titleY.value = String(ty);
   titleYVal.textContent = ty > 0 ? `+${ty} ниже` : ty < 0 ? `${ty} выше` : "0";
-  const sw = Math.max(220, Math.min(420, Number(state.layout?.sideWidth) || 320));
-  document.getElementById("pult").style.setProperty("--side-width", `${sw}px`);
   awardMiddle.checked = !!state.awards.middle;
   awardPenult.checked = !!state.awards.penultimate;
   for (const btn of document.querySelectorAll("[data-tours]")) {
@@ -672,46 +670,6 @@ loadBackgrounds(state.theme.background);
 bindPoster({ getState: () => state, toast });
 
 const pult = document.getElementById("pult");
-const splitter = document.getElementById("splitter");
-const work = document.querySelector(".work");
-let splitDrag = null;
-function setSideWidth(px, publish = false) {
-  const width = Math.max(220, Math.min(420, Math.round(px)));
-  if (!state.layout) state.layout = {};
-  state.layout.sideWidth = width;
-  pult.style.setProperty("--side-width", `${width}px`);
-  if (publish) afterChange();
-}
-splitter.addEventListener("pointerdown", (e) => {
-  if (window.innerWidth <= 1100) return;
-  splitter.setPointerCapture?.(e.pointerId);
-  splitDrag = { pointerId: e.pointerId };
-  pult.classList.add("is-resizing");
-  document.body.style.cursor = "col-resize";
-  e.preventDefault();
-});
-splitter.addEventListener("pointermove", (e) => {
-  if (!splitDrag || e.pointerId !== splitDrag.pointerId) return;
-  const rect = work.getBoundingClientRect();
-  setSideWidth(rect.right - e.clientX);
-});
-function finishSplit(e) {
-  if (!splitDrag || (e && e.pointerId !== splitDrag.pointerId)) return;
-  splitter.releasePointerCapture?.(splitDrag.pointerId);
-  splitDrag = null;
-  pult.classList.remove("is-resizing");
-  document.body.style.cursor = "";
-  state.rev = (Number(state.rev) || 0) + 1;
-  bus.publish(state);
-}
-splitter.addEventListener("pointerup", finishSplit);
-splitter.addEventListener("pointercancel", finishSplit);
-splitter.addEventListener("keydown", (e) => {
-  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-  e.preventDefault();
-  const current = Number(state.layout?.sideWidth) || 320;
-  setSideWidth(current + (e.key === "ArrowLeft" ? -10 : 10), true);
-});
 function setView(view) {
   pult.dataset.view = view;
   document.getElementById("tabTable").classList.toggle("is-live", view === "table");
