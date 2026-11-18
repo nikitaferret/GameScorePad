@@ -1,8 +1,8 @@
 export const CHANNEL = "gamescorepad-v1";
 export const STORAGE_KEY = "gamescorepad-state-v2";
 export const MAX_TEAMS = 24;
-export const MIN_TOURS = 6;
-export const MAX_TOURS = 8;
+export const MIN_TOURS = 1;
+export const MAX_TOURS = 30;
 
 export function defaultTheme() {
   return {

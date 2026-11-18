@@ -27,6 +27,7 @@ const colorBar = document.getElementById("colorBar");
 const colorTable = document.getElementById("colorTable");
 const tableScale = document.getElementById("tableScale");
 const tableScaleVal = document.getElementById("tableScaleVal");
+const tourCountInput = document.getElementById("tourCount");
 const titleY = document.getElementById("titleY");
 const titleYVal = document.getElementById("titleYVal");
 const bgUpload = document.getElementById("bgUpload");
@@ -60,11 +61,9 @@ function paint() {
   const ty = Math.max(-20, Math.min(20, Number(state.theme.titleY) || 0));
   if (document.activeElement !== titleY) titleY.value = String(ty);
   titleYVal.textContent = ty > 0 ? `+${ty} ниже` : ty < 0 ? `${ty} выше` : "0";
+  if (document.activeElement !== tourCountInput) tourCountInput.value = String(state.tours);
   awardMiddle.checked = !!state.awards.middle;
   awardPenult.checked = !!state.awards.penultimate;
-  for (const btn of document.querySelectorAll("[data-tours]")) {
-    btn.classList.toggle("is-live", Number(btn.dataset.tours) === state.tours);
-  }
   for (const btn of document.querySelectorAll("[data-mode]")) {
     const on =
       (btn.dataset.mode === "idle" && state.mode === "idle") ||
@@ -516,9 +515,21 @@ document.getElementById("previewClose").addEventListener("click", () => setPrevi
 document.getElementById("liveBtn").addEventListener("click", () => startShow(false));
 document.getElementById("finalBtn").addEventListener("click", () => startShow(true));
 
-for (const btn of document.querySelectorAll("[data-tours]")) {
-  btn.addEventListener("click", () => setTours(Number(btn.dataset.tours)));
-}
+tourCountInput.addEventListener("change", () => {
+  const raw = Number(tourCountInput.value);
+  if (!Number.isFinite(raw) || raw < 1) {
+    tourCountInput.value = String(state.tours);
+    toast("Укажи от 1 до 30 туров.");
+    return;
+  }
+  setTours(raw);
+});
+tourCountInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    tourCountInput.blur();
+  }
+});
 
 awardMiddle.addEventListener("change", () => {
   state.awards.middle = awardMiddle.checked;

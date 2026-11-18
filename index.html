@@ -190,6 +190,7 @@
       align-items: center;
     }
     .ops { margin-top: 8px; flex-shrink: 0; }
+    #tourCount { width: 90px; padding: 6px 8px; }
     #teamCount { opacity: 0.8; font-size: 13px; }
     .modes {
       flex-direction: row;
@@ -389,9 +390,8 @@
     <section class="card side-card">
       <label class="kicker">Туры</label>
       <div class="tours">
-        <button type="button" data-tours="6">6</button>
-        <button type="button" data-tours="7">7</button>
-        <button type="button" data-tours="8">8</button>
+        <label for="tourCount">Количество туров</label>
+        <input id="tourCount" type="number" min="1" max="30" step="1" value="7" aria-label="Количество туров" />
       </div>
       <label class="kicker" style="margin-top:10px">Зал</label>
       <div class="modes">
